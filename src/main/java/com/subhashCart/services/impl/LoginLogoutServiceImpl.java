@@ -188,7 +188,6 @@ public class LoginLogoutServiceImpl implements LoginLogoutService {
 
 
     // Method to logout a seller and delete his session token
-
     @Override
     public SessionDTO logoutSeller(SessionDTO session) {
 
