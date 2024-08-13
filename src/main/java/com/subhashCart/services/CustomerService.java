@@ -7,6 +7,7 @@ import com.subhashCart.exceptions.CustomerException;
 import com.subhashCart.exceptions.CustomerNotFoundException;
 import com.subhashCart.models.Address;
 import com.subhashCart.models.Customer;
+import com.subhashCart.models.Order;
 
 import java.util.List;
 
@@ -29,4 +30,8 @@ public interface CustomerService {
     Customer updateAddress(Address address, String type, String token) throws CustomerException;
 
     Customer deleteAddress(String type, String token) throws CustomerException, CustomerNotFoundException;
+
+    public List<Order> getCustomerOrders(String token) throws CustomerException;
+
+    Customer getLoggedInCustomerDetails(String token);
 }

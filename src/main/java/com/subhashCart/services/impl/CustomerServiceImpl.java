@@ -8,6 +8,7 @@ import com.subhashCart.exceptions.CustomerNotFoundException;
 import com.subhashCart.exceptions.LoginException;
 import com.subhashCart.models.Address;
 import com.subhashCart.models.Customer;
+import com.subhashCart.models.Order;
 import com.subhashCart.models.UserSession;
 import com.subhashCart.repositories.CustomerDao;
 import com.subhashCart.repositories.SessionDao;
@@ -309,6 +310,32 @@ public class CustomerServiceImpl implements CustomerService
         existingCustomer.getAddress().remove(type);
 
         return customerDao.save(existingCustomer);
+    }
+
+    @Override
+    public List<Order> getCustomerOrders(String token) throws CustomerException {
+
+        if(token.contains("customer") == false) {
+            throw new LoginException("Invalid session token for customer");
+        }
+
+        loginService.checkTokenStatus(token);
+
+        UserSession user = sessionDao.findByToken(token).get();
+
+        Optional<Customer> opt = customerDao.findById(user.getUserId());
+
+        if(opt.isEmpty())
+            throw new CustomerNotFoundException("Customer does not exist");
+
+        Customer existingCustomer = opt.get();
+
+        List<Order> myOrders = existingCustomer.getOrders();
+
+        if(myOrders.size() == 0)
+            throw new CustomerException("No orders found");
+
+        return myOrders;
     }
 }
 

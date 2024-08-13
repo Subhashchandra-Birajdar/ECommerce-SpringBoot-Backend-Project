@@ -5,6 +5,7 @@ import com.subhashCart.dtos.CustomerUpdateDTO;
 import com.subhashCart.dtos.SessionDTO;
 import com.subhashCart.models.Address;
 import com.subhashCart.models.Customer;
+import com.subhashCart.models.Order;
 import com.subhashCart.services.CustomerService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -73,6 +74,11 @@ public class CustomerController {
     @DeleteMapping("/customer")
     public ResponseEntity<SessionDTO> deleteCustomerHandler(@Valid @RequestBody CustomerDTO customerDto, @RequestHeader("token") String token){
         return new ResponseEntity<>(customerService.deleteCustomer(customerDto, token), HttpStatus.ACCEPTED);
+    }
+
+    @GetMapping("/customer/orders")
+    public ResponseEntity<List<Order>> getCustomerOrdersHandler(@RequestHeader("token") String token){
+        return new ResponseEntity<>(customerService.getCustomerOrders(token), HttpStatus.ACCEPTED);
     }
 
 

@@ -1,18 +1,20 @@
 package com.subhashCart.models;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
 import lombok.AllArgsConstructor;
-import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
+
+import java.util.List;
 
 @Entity
-@Data
+@Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 public class Seller {
@@ -33,9 +35,18 @@ public class Seller {
 
     @NotNull(message="Please enter your mobile Number")
     @Pattern(regexp="[6789]{1}[0-9]{9}", message="Enter a valid Mobile Number")
+    @Column(unique = true)
     private String mobile;
 
+
     @Email
+    @Column(unique = true)
     private String emailId;
+
+
+    @OneToMany
+    @JsonIgnore
+    private List<Product> product;
+
 
 }

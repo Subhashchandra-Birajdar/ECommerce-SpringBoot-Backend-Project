@@ -1,29 +1,19 @@
 package com.subhashCart.models;
 
-import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
-
-import jakarta.persistence.CascadeType;
-import jakarta.persistence.Column;
-import jakarta.persistence.Embedded;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.JoinTable;
-import jakarta.persistence.OneToMany;
-import jakarta.persistence.OneToOne;
+import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
-
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
+
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 
 @Data
@@ -40,7 +30,7 @@ public class Customer {
     @NotNull(message = "First Name cannot be NULL")
     @Pattern(regexp = "[A-Za-z.\\s]+", message = "Enter valid characters in first name")
     private String firstName;
-    
+
     @NotNull(message = "Last Name cannot be NULL")
     @Pattern(regexp = "[A-Za-z.\\s]+", message = "Enter valid characters in last name")
     private String lastName;
@@ -63,6 +53,9 @@ public class Customer {
 
     private LocalDateTime createdOn;
 
+    @Embedded
+    private CreditCard creditCard;
+
 
     @OneToMany(cascade = CascadeType.ALL)
     @JoinTable(name = "customer_address_mapping",
@@ -73,6 +66,20 @@ public class Customer {
                     @JoinColumn(name = "address_id", referencedColumnName = "addressId")
             })
     private Map<String, Address> address = new HashMap<>();
+
+
+
+
+
+    //	Establishing Customer - Order relationship
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "customer")
+    private List<Order> orders = new ArrayList<>();
+
+
+
+    //	Establishing Customer - Cart relationship
+    @OneToOne(cascade = CascadeType.ALL)
+    private Cart customerCart;
 
 }
 
