@@ -33,5 +33,4 @@ public interface CustomerService {
 
     public List<Order> getCustomerOrders(String token) throws CustomerException;
 
-    Customer getLoggedInCustomerDetails(String token);
 }
