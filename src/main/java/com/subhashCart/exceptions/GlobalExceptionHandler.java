@@ -68,8 +68,6 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(err, HttpStatus.FORBIDDEN);
     }
     // Custom Exception Handler Area Ends
-
-
     @ExceptionHandler(NoHandlerFoundException.class)
     public ResponseEntity<ErrorDetails> noHandlerFoundExceptionHandler(NoHandlerFoundException nhfe, WebRequest wr){
         ErrorDetails err = new ErrorDetails(LocalDateTime.now(), nhfe.getMessage(), wr.getDescription(false));

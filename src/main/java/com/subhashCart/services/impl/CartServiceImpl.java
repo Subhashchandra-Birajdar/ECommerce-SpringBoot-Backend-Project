@@ -34,7 +34,6 @@ public class CartServiceImpl implements CartService {
     @Autowired
     private CartItemService cartItemService;
 
-
     @Autowired
     private CustomerDao customerDao;
 

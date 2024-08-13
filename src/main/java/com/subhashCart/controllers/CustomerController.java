@@ -29,10 +29,19 @@ public class CustomerController {
     }
 
 
+    // Handler to Get a customer details of currently logged in user - sends data as per token
+
+    @GetMapping("/customer/current")
+    public ResponseEntity<Customer> getLoggedInCustomerDetailsHandler(@RequestHeader("token") String token){
+        return new ResponseEntity<>(customerService.getLoggedInCustomerDetails(token), HttpStatus.ACCEPTED);
+    }
+
     // Handler to Get a customer details by his mobile id
 
     @GetMapping("/customer")
-    public ResponseEntity<Customer> getCustomerByMobileNoHandler(@RequestParam("mobile") String mobileNo, @RequestHeader("token") String token){
+    public ResponseEntity<Customer> getCustomerByMobileNoHandler(
+            @RequestParam("mobile") String mobileNo,
+            @RequestHeader("token") String token){
         return new ResponseEntity<>(customerService.getCustomerByMobileNo(mobileNo, token), HttpStatus.ACCEPTED);
     }
 

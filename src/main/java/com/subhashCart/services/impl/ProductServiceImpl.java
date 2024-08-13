@@ -1,64 +1,170 @@
 package com.subhashCart.services.impl;
 
+import com.subhashCart.dtos.ProductDTO;
+import com.subhashCart.exceptions.CategoryNotFoundException;
+import com.subhashCart.exceptions.ProductNotFoundException;
 import com.subhashCart.models.Product;
+import com.subhashCart.models.Seller;
+import com.subhashCart.models.enums.CategoryEnum;
+import com.subhashCart.models.enums.ProductStatus;
 import com.subhashCart.repositories.ProductDao;
+import com.subhashCart.repositories.SellerDao;
 import com.subhashCart.services.ProductService;
+import com.subhashCart.services.SellerService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
 public class ProductServiceImpl implements ProductService {
-
     @Autowired
     private ProductDao prodDao;
 
+    @Autowired
+    private SellerService sService;
 
-
-
-    @Override
-    public Product addProductToCatalog(Product product) {
-
-        Product addedProduct = prodDao.save(product);
-
-
-
-        return addedProduct;
-    }
+    @Autowired
+    private SellerDao sDao;
 
     @Override
-    public Product getProductFromCatalogById(Integer id) {
+    public Product addProductToCatalog(String token, Product product) {
 
-        Optional<Product> opt =   prodDao.findById(id);
+        Product prod = null;
+        Seller seller1 = sService.getCurrentlyLoggedInSeller(token);
+        product.setSeller(seller1);
 
-        return opt.get();
-    }
+        Seller Existingseller = sService.getSellerByMobile(product.getSeller().getMobile(), token);
+        Optional<Seller> opt = sDao.findById(Existingseller.getSellerId());
 
-    @Override
-    public String deleteProductFromCatalog(Integer id) {
-        Optional<Product> opt  = prodDao.findById(id);
+        if (opt.isPresent()) {
+            Seller seller = opt.get();
 
-        Product prod = opt.get();
-        prodDao.delete(prod);
+            product.setSeller(seller);
 
-        return "Product deleted from catalog";
-    }
+            prod = prodDao.save(product);
+            ;
 
-    @Override
-    public Product updateProductInCatalog(Product prod) {
+            seller.getProduct().add(product);
+            sDao.save(seller);
 
-        Optional<Product> opt =  prodDao.findById(prod.getProductId());
-
-        if(opt.isPresent()) {
-            Product existingProduct = 	opt.get();
-            Product prod1 = prodDao.save(prod);
-            return prod1;
+        } else {
+            prod = prodDao.save(product);
+            ;
         }
 
-        return null;
+        return prod;
+    }
+
+    @Override
+    public Product getProductFromCatalogById(Integer id) throws ProductNotFoundException {
+
+        Optional<Product> opt = prodDao.findById(id);
+        if (opt.isPresent()) {
+            return opt.get();
+        }
+
+        else
+            throw new ProductNotFoundException("Product not found with given id");
+    }
+
+    @Override
+    public String deleteProductFromCatalog(Integer id) throws ProductNotFoundException {
+        Optional<Product> opt = prodDao.findById(id);
+
+        if (opt.isPresent()) {
+            Product prod = opt.get();
+            System.out.println(prod);
+            prodDao.delete(prod);
+            return "Product deleted from catalog";
+        } else
+            throw new ProductNotFoundException("Product not found with given id");
+
+    }
+
+    @Override
+    public Product updateProductIncatalog(Product prod) throws ProductNotFoundException {
+
+        Optional<Product> opt = prodDao.findById(prod.getProductId());
+
+        if (opt.isPresent()) {
+            opt.get();
+            Product prod1 = prodDao.save(prod);
+            return prod1;
+        } else
+            throw new ProductNotFoundException("Product not found with given id");
+    }
+
+    @Override
+    public List<Product> getAllProductsIncatalog() {
+        List<Product> list = prodDao.findAll();
+
+        if (list.size() > 0) {
+            return list;
+        } else
+            throw new ProductNotFoundException("No products in catalog");
+
+    }
+
+    @Override
+    public List<ProductDTO> getProductsOfCategory(CategoryEnum catenum) {
+
+        List<ProductDTO> list = prodDao.getAllProductsInACategory(catenum);
+        if (list.size() > 0) {
+
+            return list;
+        } else
+            throw new CategoryNotFoundException("No products found with category:" + catenum);
+    }
+
+    @Override
+    public List<ProductDTO> getProductsOfStatus(ProductStatus status) {
+
+        List<ProductDTO> list = prodDao.getProductsWithStatus(status);
+
+        if (list.size() > 0) {
+            return list;
+        } else
+            throw new ProductNotFoundException("No products found with given status:" + status);
+    }
+
+    @Override
+    public Product updateProductQuantityWithId(Integer id,ProductDTO prodDto) {
+        Product prod = null;
+        Optional<Product> opt = prodDao.findById(id);
+
+        if(opt!=null) {
+            prod = opt.get();
+            prod.setQuantity(prod.getQuantity()+prodDto.getQuantity());
+            if(prod.getQuantity()>0) {
+                prod.setStatus(ProductStatus.AVAILABLE);
+            }
+            prodDao.save(prod);
+
+        }
+        else
+            throw new ProductNotFoundException("No product found with this Id");
+
+        return prod;
     }
 
 
+
+    @Override
+    public List<ProductDTO> getAllProductsOfSeller(Integer id) {
+
+        List<ProductDTO> list = prodDao.getProductsOfASeller(id);
+
+        if(list.size()>0) {
+
+            return list;
+
+        }
+
+        else {
+            throw new ProductNotFoundException("No products with SellerId: "+id);
+        }
+    }
 
 }
