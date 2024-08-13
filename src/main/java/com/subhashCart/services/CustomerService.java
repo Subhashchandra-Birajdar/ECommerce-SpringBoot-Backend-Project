@@ -15,6 +15,8 @@ public interface CustomerService {
 
     Customer addCustomer(Customer customer) throws CustomerException;
 
+    public Customer getLoggedInCustomerDetails(String token) throws CustomerNotFoundException;
+
     Customer getCustomerByMobileNo(String mobileNo, String token) throws CustomerNotFoundException;
 
     List<Customer> getAllCustomers(String token) throws CustomerNotFoundException;

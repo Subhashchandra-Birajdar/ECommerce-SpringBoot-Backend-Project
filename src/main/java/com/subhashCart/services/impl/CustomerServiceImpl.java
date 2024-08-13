@@ -51,6 +51,7 @@ public class CustomerServiceImpl implements CustomerService
 
         return customer;
     }
+    
 
     // Method to get a customer by mobile number
 
@@ -71,6 +72,30 @@ public class CustomerServiceImpl implements CustomerService
 
         return opt.get();
     }
+
+    // Method to get a customer by mobile number
+
+    @Override
+    public Customer getLoggedInCustomerDetails(String token){
+
+        if(token.contains("customer") == false) {
+            throw new LoginException("Invalid session token for customer");
+        }
+
+        loginService.checkTokenStatus(token);
+
+        UserSession user = sessionDao.findByToken(token).get();
+
+        Optional<Customer> opt = customerDao.findById(user.getUserId());
+
+        if(opt.isEmpty())
+            throw new CustomerNotFoundException("Customer does not exist");
+
+        Customer existingCustomer = opt.get();
+
+        return existingCustomer;
+    }
+
 
 
     // Method to get all customers - only selller or admin can get all customers - check validity of seller token
