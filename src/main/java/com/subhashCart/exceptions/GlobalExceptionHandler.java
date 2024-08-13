@@ -12,6 +12,6 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(CustomerException.class)
     public ResponseEntity<ErrorDetails> customerExceptionHandler(CustomerException ce, WebRequest wr){
         ErrorDetails err = new ErrorDetails(LocalDateTime.now(), ce.getMessage(), wr.getDescription(false));
-        return new ResponseEntity<>(err, HttpStatus.BAD_REQUEST);
+        return new ResponseEntity<>(err, HttpStatus.FORBIDDEN);
     }
 }

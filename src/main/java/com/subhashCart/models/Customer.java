@@ -3,6 +3,7 @@ package com.subhashCart.models;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Map;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
@@ -39,7 +40,7 @@ public class Customer {
     @NotNull(message = "First Name cannot be NULL")
     @Pattern(regexp = "[A-Za-z.\\s]+", message = "Enter valid characters in first name")
     private String firstName;
-
+    
     @NotNull(message = "Last Name cannot be NULL")
     @Pattern(regexp = "[A-Za-z.\\s]+", message = "Enter valid characters in last name")
     private String lastName;
@@ -61,9 +62,6 @@ public class Customer {
 
 
     private LocalDateTime createdOn;
-  /*
-    @Embedded
-    private CreditCard creditCard;
 
 
     @OneToMany(cascade = CascadeType.ALL)
@@ -76,21 +74,6 @@ public class Customer {
             })
     private Map<String, Address> address = new HashMap<>();
 
-
-
-
-
-    //	Establishing Customer - Order relationship
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "customer")
-    private List<Order> orders = new ArrayList<>();
-
-
-
-    //	Establishing Customer - Cart relationship
-//	
-    @OneToOne(cascade = CascadeType.ALL)
-    private Cart customerCart;
-
-
-  */
 }
+
+// ctr + shift + r = replace the word
