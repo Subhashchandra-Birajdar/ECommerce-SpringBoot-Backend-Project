@@ -26,8 +26,10 @@ public class CustomerServiceImpl implements CustomerService
 {
 
     @Autowired
-    private CustomerDao customerDao;     // ctrl+alt+shift+j -->select same word
+    private CustomerDao customerDao;
 
+    // ctrl+alt+shift+j -->select same word
+    // alt ->  right side file move in intellij
 
     @Autowired
     private LoginLogoutService loginService;
