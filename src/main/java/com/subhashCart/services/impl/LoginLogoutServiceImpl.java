@@ -21,10 +21,10 @@ public class LoginLogoutServiceImpl implements LoginLogoutService {
 
 
     @Autowired
-    private SessionDao sDao;
+    private SessionDao sessionDao;
 
     @Autowired
-    private CustomerDao cDao;
+    private CustomerDao customerDao;
 
 
 
@@ -33,14 +33,14 @@ public class LoginLogoutServiceImpl implements LoginLogoutService {
     @Override
     public UserSession loginCustomer(CustomerDTO loginCustomer) {
 
-        Optional<Customer> res = cDao.findByMobileNo(loginCustomer.getMobileId());
+        Optional<Customer> res = customerDao.findByMobileNo(loginCustomer.getMobileId());
 
         if(res.isEmpty())
             throw new CustomerException("Customer record does not exist with given mobile number");
 
         Customer existingCustomer = res.get();
 
-        Optional<UserSession> opt = sDao.findByUserId(existingCustomer.getCustomerId());
+        Optional<UserSession> opt = sessionDao.findByUserId(existingCustomer.getCustomerId());
 
         if(opt.isPresent())
             throw new LoginException("User already logged in");
@@ -60,7 +60,7 @@ public class LoginLogoutServiceImpl implements LoginLogoutService {
 
             newSession.setToken(token);
 
-            return sDao.save(newSession);
+            return sessionDao.save(newSession);
         }
         else {
             throw new LoginException("Password Incorrect. Try again.");
@@ -77,14 +77,14 @@ public class LoginLogoutServiceImpl implements LoginLogoutService {
 
         checkTokenStatus(token);
 
-        Optional<UserSession> opt = sDao.findByToken(token);
+        Optional<UserSession> opt = sessionDao.findByToken(token);
 
         if(!opt.isPresent())
             throw new LoginException("User not logged in. Invalid session token. Login Again.");
 
         UserSession session = opt.get();
 
-        sDao.delete(session);
+        sessionDao.delete(session);
 
         sessionToken.setMessage("Logged out sucessfully.");
 
@@ -98,13 +98,13 @@ public class LoginLogoutServiceImpl implements LoginLogoutService {
 
     @Override
     public void checkTokenStatus(String token) {
-        Optional<UserSession> opt = sDao.findByToken(token);
+        Optional<UserSession> opt = sessionDao.findByToken(token);
 
         if(opt.isPresent()) {
             UserSession session = opt.get();
             LocalDateTime endTime = session.getSessionEndTime();
             if(endTime.isBefore(LocalDateTime.now())) {
-                sDao.delete(session);
+                sessionDao.delete(session);
                 throw new LoginException("Session expired. Login Again");
             }
         }
