@@ -60,7 +60,8 @@ public class SellerController {
     // Get Seller by mobile Number
 
     @GetMapping("/seller")
-    public ResponseEntity<Seller> getSellerByMobileHandler(@RequestParam("mobile") String mobile, @RequestHeader("token") String token){
+    public ResponseEntity<Seller> getSellerByMobileHandler(
+            @RequestParam("mobile") String mobile, @RequestHeader("token") String token){
 
         Seller getSeller=sService.getSellerByMobile(mobile, token);
 
