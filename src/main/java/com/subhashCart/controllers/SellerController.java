@@ -73,48 +73,43 @@ public class SellerController {
 
     @GetMapping("/seller/current")
     public ResponseEntity<Seller> getLoggedInSellerHandler(@RequestHeader("token") String token){
-
         Seller getSeller = sService.getCurrentlyLoggedInSeller(token);
-
         return new ResponseEntity<Seller>(getSeller, HttpStatus.OK);
     }
 
     //Update the seller..............................
-
-
     @PutMapping("/seller")
-    public ResponseEntity<Seller> updateSellerHandler(@RequestBody Seller seller, @RequestHeader("token") String token){
+    public ResponseEntity<Seller> updateSellerHandler(
+            @RequestBody Seller seller,
+            @RequestHeader("token") String token){
         Seller updatedseller=sService.updateSeller(seller, token);
-
         return new ResponseEntity<Seller>(updatedseller,HttpStatus.ACCEPTED);
-
     }
 
 
     @PutMapping("/seller/update/mobile")
-    public ResponseEntity<Seller> updateSellerMobileHandler(@Valid @RequestBody SellerDTO sellerdto, @RequestHeader("token") String token){
+    public ResponseEntity<Seller> updateSellerMobileHandler(
+            @Valid @RequestBody SellerDTO sellerdto,
+            @RequestHeader("token") String token){
         Seller updatedseller=sService.updateSellerMobile(sellerdto, token);
-
         return new ResponseEntity<Seller>(updatedseller,HttpStatus.ACCEPTED);
-
     }
 
 
     @PutMapping("/seller/update/password")
-    public ResponseEntity<SessionDTO> updateSellerPasswordHandler(@Valid @RequestBody SellerDTO sellerDto, @RequestHeader("token") String token){
+    public ResponseEntity<SessionDTO> updateSellerPasswordHandler(
+            @Valid @RequestBody SellerDTO sellerDto,
+            @RequestHeader("token") String token){
         return new ResponseEntity<>(sService.updateSellerPassword(sellerDto, token), HttpStatus.ACCEPTED);
     }
 
 
     @DeleteMapping("/seller/{sellerId}")
-    public ResponseEntity<Seller> deleteSellerByIdHandler(@PathVariable("sellerId") Integer Id, @RequestHeader("token") String token){
-
+    public ResponseEntity<Seller> deleteSellerByIdHandler(
+            @PathVariable("sellerId") Integer Id,
+            @RequestHeader("token") String token){
         Seller deletedSeller=sService.deleteSellerById(Id, token);
-
         return new ResponseEntity<Seller>(deletedSeller,HttpStatus.OK);
 
     }
-
-
-
 }
