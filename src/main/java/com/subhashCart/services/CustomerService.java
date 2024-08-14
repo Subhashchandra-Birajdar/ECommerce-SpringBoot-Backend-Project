@@ -6,6 +6,7 @@ import com.subhashCart.dtos.SessionDTO;
 import com.subhashCart.exceptions.CustomerException;
 import com.subhashCart.exceptions.CustomerNotFoundException;
 import com.subhashCart.models.Address;
+import com.subhashCart.models.CreditCard;
 import com.subhashCart.models.Customer;
 import com.subhashCart.models.Order;
 
@@ -23,6 +24,8 @@ public interface CustomerService {
 
     Customer updateCustomer(CustomerUpdateDTO customer, String token) throws CustomerNotFoundException;
 
+    public Customer updateCreditCardDetails(String token, CreditCard card) throws CustomerException;
+    
     Customer updateCustomerMobileNoOrEmailId(CustomerUpdateDTO customerUpdateDTO, String token) throws CustomerNotFoundException;
 
     Customer updateCustomerPassword(CustomerDTO customerDTO, String token) throws CustomerNotFoundException;

@@ -20,7 +20,6 @@ public class SellerController {
 
 
     //Add seller-------------------------------------
-
     @PostMapping("/addseller")
     public ResponseEntity<Seller> addSellerHandler(@Valid @RequestBody Seller seller){
 
@@ -34,8 +33,6 @@ public class SellerController {
 
 
     //Get the list of seller-----------------------
-
-
     @GetMapping("/sellers")
     public ResponseEntity<List<Seller>> getAllSellerHandler(){
 
@@ -46,8 +43,6 @@ public class SellerController {
 
 
     //Get the seller by Id............................
-
-
     @GetMapping("/seller/{sellerId}")
     public ResponseEntity<Seller> getSellerByIdHandler(@PathVariable("sellerId") Integer Id){
 
@@ -58,7 +53,6 @@ public class SellerController {
 
 
     // Get Seller by mobile Number
-
     @GetMapping("/seller")
     public ResponseEntity<Seller> getSellerByMobileHandler(
             @RequestParam("mobile") String mobile, @RequestHeader("token") String token){
@@ -70,7 +64,6 @@ public class SellerController {
 
 
     // Get currently logged in seller
-
     @GetMapping("/seller/current")
     public ResponseEntity<Seller> getLoggedInSellerHandler(@RequestHeader("token") String token){
         Seller getSeller = sService.getCurrentlyLoggedInSeller(token);
@@ -86,7 +79,7 @@ public class SellerController {
         return new ResponseEntity<Seller>(updatedseller,HttpStatus.ACCEPTED);
     }
 
-
+    //Update the seller mobile..............................
     @PutMapping("/seller/update/mobile")
     public ResponseEntity<Seller> updateSellerMobileHandler(
             @Valid @RequestBody SellerDTO sellerdto,
@@ -95,7 +88,7 @@ public class SellerController {
         return new ResponseEntity<Seller>(updatedseller,HttpStatus.ACCEPTED);
     }
 
-
+    //Update the seller password..............................
     @PutMapping("/seller/update/password")
     public ResponseEntity<SessionDTO> updateSellerPasswordHandler(
             @Valid @RequestBody SellerDTO sellerDto,
@@ -103,7 +96,7 @@ public class SellerController {
         return new ResponseEntity<>(sService.updateSellerPassword(sellerDto, token), HttpStatus.ACCEPTED);
     }
 
-
+    //delete the seller with seller id..............................
     @DeleteMapping("/seller/{sellerId}")
     public ResponseEntity<Seller> deleteSellerByIdHandler(
             @PathVariable("sellerId") Integer Id,

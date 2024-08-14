@@ -6,10 +6,7 @@ import com.subhashCart.dtos.SessionDTO;
 import com.subhashCart.exceptions.CustomerException;
 import com.subhashCart.exceptions.CustomerNotFoundException;
 import com.subhashCart.exceptions.LoginException;
-import com.subhashCart.models.Address;
-import com.subhashCart.models.Customer;
-import com.subhashCart.models.Order;
-import com.subhashCart.models.UserSession;
+import com.subhashCart.models.*;
 import com.subhashCart.repositories.CustomerDao;
 import com.subhashCart.repositories.SessionDao;
 import com.subhashCart.services.CustomerService;
@@ -311,6 +308,32 @@ public class CustomerServiceImpl implements CustomerService
 
         return customerDao.save(existingCustomer);
     }
+
+    // Method to update Credit card
+
+    @Override
+    public Customer updateCreditCardDetails(String token, CreditCard card) throws CustomerException{
+
+        if(token.contains("customer") == false) {
+            throw new LoginException("Invalid session token for customer");
+        }
+
+        loginService.checkTokenStatus(token);
+
+        UserSession user = sessionDao.findByToken(token).get();
+
+        Optional<Customer> opt = customerDao.findById(user.getUserId());
+
+        if(opt.isEmpty())
+            throw new CustomerNotFoundException("Customer does not exist");
+
+        Customer existingCustomer = opt.get();
+
+        existingCustomer.setCreditCard(card);
+
+        return customerDao.save(existingCustomer);
+    }
+
 
     @Override
     public Customer deleteAddress(String type, String token) throws CustomerException, CustomerNotFoundException {
