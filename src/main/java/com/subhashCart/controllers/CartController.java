@@ -24,7 +24,9 @@ public class CartController {
 
 
     @PostMapping(value = "/cart/add")
-    public ResponseEntity<Cart> addProductToCartHander(@RequestBody CartDTO cartdto , @RequestHeader("token")String token){
+    public ResponseEntity<Cart> addProductToCartHander(
+            @RequestBody CartDTO cartdto ,
+            @RequestHeader("token")String token){
 
         Cart cart = cartService.addProductToCart(cartdto, token);
         return new ResponseEntity<Cart>(cart, HttpStatus.CREATED);

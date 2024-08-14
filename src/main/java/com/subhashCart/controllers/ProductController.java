@@ -23,6 +23,7 @@ public class ProductController {
     // if seller is already existing products will be mapped to same seller) and
     // returns added product
 
+    // Adds a new product to database
     @PostMapping("/products")
     public ResponseEntity<Product> addProductToCatalogHandler(@RequestHeader("token") String token,
                                                               @Valid @RequestBody Product product) {
@@ -37,8 +38,8 @@ public class ProductController {
     // product
 
     @GetMapping("/product/{id}")
-    public ResponseEntity<Product> getProductFromCatalogByIdHandler(@PathVariable("id") Integer id) {
-
+    public ResponseEntity<Product> getProductFromCatalogByIdHandler(
+            @PathVariable("id") Integer id) {
         Product prod = pService.getProductFromCatalogById(id);
 
         return new ResponseEntity<Product>(prod, HttpStatus.FOUND);
@@ -49,6 +50,7 @@ public class ProductController {
     // This will be called only when the product qty will be zero or seller wants to
     // delete for any other reason
 
+    // Updates product quantity
     @DeleteMapping("/product/{id}")
     public ResponseEntity<String> deleteProductFromCatalogHandler(@PathVariable("id") Integer id) {
 
@@ -56,6 +58,7 @@ public class ProductController {
         return new ResponseEntity<String>(res, HttpStatus.OK);
     }
 
+    // Updates the product with given product id
     @PutMapping("/products")
     public ResponseEntity<Product> updateProductInCatalogHandler(@Valid @RequestBody Product prod) {
 
@@ -65,6 +68,7 @@ public class ProductController {
 
     }
 
+    // Gets all products
     @GetMapping("/products")
     public ResponseEntity<List<Product>> getAllProductsHandler() {
 
@@ -74,16 +78,20 @@ public class ProductController {
     }
 
     //this method gets the products mapped to a particular seller
+    // Gets product of given seller id
     @GetMapping("/products/seller/{id}")
-    public ResponseEntity<List<ProductDTO>> getAllProductsOfSellerHandler(@PathVariable("id") Integer id) {
+    public ResponseEntity<List<ProductDTO>> getAllProductsOfSellerHandler(
+            @PathVariable("id") Integer id) {
 
         List<ProductDTO> list = pService.getAllProductsOfSeller(id);
 
         return new ResponseEntity<List<ProductDTO>>(list, HttpStatus.OK);
     }
 
+    // Gets product with given category
     @GetMapping("/products/{catenum}")
-    public ResponseEntity<List<ProductDTO>> getAllProductsInCategory(@PathVariable("catenum") String catenum) {
+    public ResponseEntity<List<ProductDTO>> getAllProductsInCategory(
+            @PathVariable("catenum") String catenum) {
         CategoryEnum ce = CategoryEnum.valueOf(catenum.toUpperCase());
         List<ProductDTO> list = pService.getProductsOfCategory(ce);
         return new ResponseEntity<List<ProductDTO>>(list, HttpStatus.OK);
