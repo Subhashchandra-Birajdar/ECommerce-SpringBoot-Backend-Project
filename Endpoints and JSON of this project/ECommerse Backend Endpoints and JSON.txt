@@ -1,0 +1,1172 @@
+REST API for an E-Commerce Application
+We have developed this REST API for an e-commerce application. 
+This API performs all the fundamental CRUD operations of any e-commerce platform with user validation at every step.
+
+ech Stack
+Java
+Spring Framework
+Spring Boot
+Spring Data JPA
+Hibernate
+MySQL
+
+Modules
+Login, Logout Module
+Seller Module
+Customer Module
+Product Module
+Cart Module
+Order Module
+
+Features
+Customer and Seller authentication & validation with session token having validity of 1 hour for security purposes
+Seller Features:
+Administrator Role of the entire application
+Only registered seller with valid session token can add/update/delete products from main database
+Seller can access the details of different customers, orders
+Customer Features:
+Registering themselves with application, and logging in to get the valid session token
+Viewing different products and adding them to cart and placing orders
+Only logged in user can access his orders, cart and other features.
+
+
+Installation & Run
+Before running the API server, you should update the database config inside the application.properties file.
+Update the port number, username and password as per your local database config.
+    server.port=8009
+
+    spring.datasource.url=jdbc:mysql://localhost:3306/ecommercedb
+    spring.datasource.driver-class-name=com.mysql.cj.jdbc.Driver
+    spring.datasource.username=root
+    spring.datasource.password=root
+
+API Root Endpoint
+https://localhost:9000/
+
+http://localhost:9000/swagger-ui/index.html#/
+
+API Module Endpoints
+Login & Logout Module
+POST /register/customer : Register a new customer
+http://localhost:9000/register/customer
+----------
+{
+    "firstName": "girish",
+    "lastName": "Doe",
+    "mobileNo": "6834554321",
+    "emailId": "girish.doe@example.com",
+    "password": "Password123!",
+    "creditCard": {        
+        "cardNumber": "6934567812345678",
+        "cardValidity": "08/2024",
+        "cardCVV": "123"
+    },
+    "address": {
+        "home": {
+            "streetNo": "rajaji pavan",
+            "buildingName": null,
+            "locality": "indian",
+            "city": "Springfield",
+            "state": "IL",
+            "pincode": "214278"
+        }
+    },
+    "orders": [],
+    "customerCart": {        
+    "productId":1,
+    "productName":"Iphone Galaxy s24",
+    "price":3500.99,
+    "quantity":2
+    }
+}
+
+{
+  "firstName": "John",
+  "lastName": "Doe",
+  "mobileNo": "9876543210",
+  "emailId": "john.doe@example.com",
+  "password": "Password123!",
+  "address": {
+    "home": {
+      "street": "123 Main St",
+      "city": "Springfield",
+      "streetNo":"rajaji pavan",
+      "locality":"indian",
+      "state": "IL",
+      "zip": "62701",
+      "pincode":214278
+    }
+  }
+}
+
+Response
+{
+    "customerId": 2,
+    "firstName": "John",
+    "lastName": "Doe",
+    "mobileNo": "9876543210",
+    "emailId": "john.doe@example.com",
+    "password": "Password123!",
+    "createdOn": "2024-08-13T13:16:00.4188138",
+    "creditCard": null,
+    "address": {
+        "home": {
+            "addressId": 2,
+            "streetNo": "rajaji pavan",
+            "buildingName": null,
+            "locality": "indian",
+            "city": "Springfield",
+            "state": "IL",
+            "pincode": "214278"
+        }
+    },
+    "orders": [],
+    "customerCart": null
+}
+
+POST /login/customer : Logging in customer with valid mobile number & password
+http://localhost:9000/login/customer
+{
+  "mobileId": "9876543210",
+  "emailId": "john.doe@example.com",
+  "password": "Password123!"
+}
+Response:
+{
+    "sessionId": 1,
+    "token": "customer_577d3aa2",
+    "userId": 2,
+    "userType": "customer",
+    "sessionStartTime": "2024-08-13T13:23:55.1391042",
+    "sessionEndTime": "2024-08-13T14:23:55.1391042"
+}
+
+
+POST /logout/customer : Logging out customer based on session token
+http://localhost:9000/logout/customer
+{
+     "token": "customer_577d3aa2"
+}
+Response:
+{
+    "token": "customer_577d3aa2",
+    "message": "Logged out sucessfully."
+}
+
+
+Customer Module
+GET /customer/current : Getting currently logged in customer
+http://localhost:9000/customer/current
+key = token value = customer_12574fe1
+Response :
+{
+    "customerId": 2,
+    "firstName": "John",
+    "lastName": "Doe",
+    "mobileNo": "9876543210",
+    "emailId": "john.doe@example.com",
+    "password": "Password123!",
+    "createdOn": "2024-08-13T13:16:00.418814",
+    "creditCard": null,
+    "address": {
+        "home": {
+            "addressId": 2,
+            "streetNo": "rajaji pavan",
+            "buildingName": null,
+            "locality": "indian",
+            "city": "Springfield",
+            "state": "IL",
+            "pincode": "214278"
+        }
+    },
+    "orders": [],
+    "customerCart": null
+}
+
+
+GET /customer/orders : Getting order history of logged in customer
+http://localhost:9000/customer/orders
+Headers :
+key = token value = customer_aef2d400
+Response:
+[
+    {
+        "orderId": 2,
+        "date": "2024-08-16",
+        "orderStatus": "SUCCESS",
+        "total": 3500.99,
+        "cardNumber": "6934567812345678",
+        "ordercartItems": [
+            {
+                "cartItemId": 2,
+                "cartProduct": {
+                    "productName": "Iphone Galaxy s24",
+                    "price": 3500.99,
+                    "description": "A brief description of the product.",
+                    "manufacturer": "Apple Manufacturer",
+                    "category": "ELECTRONICS",
+                    "status": "AVAILABLE"
+                },
+                "cartItemQuantity": 1
+            }
+        ],
+        "address": null
+    },
+    {
+        "orderId": 3,
+        "date": "2024-08-16",
+        "orderStatus": "SUCCESS",
+        "total": 3000.99,
+        "cardNumber": "6934567812345678",
+        "ordercartItems": [
+            {
+                "cartItemId": 3,
+                "cartProduct": {
+                    "productName": "Samsung Galaxy s24",
+                    "price": 3000.99,
+                    "description": "Best product of Samsung.",
+                    "manufacturer": "Samsung Manufacturer",
+                    "category": "ELECTRONICS",
+                    "status": "AVAILABLE"
+                },
+                "cartItemQuantity": 1
+            }
+        ],
+        "address": {
+            "addressId": 153,
+            "streetNo": "rajaji pavan",
+            "buildingName": null,
+            "locality": "indian",
+            "city": "Springfield",
+            "state": "IL",
+            "pincode": "214278"
+        }
+    },
+    {
+        "orderId": 1,
+        "date": "2024-08-16",
+        "orderStatus": "CANCELLED",
+        "total": 29.99,
+        "cardNumber": "6934567812345678",
+        "ordercartItems": [
+            {
+                "cartItemId": 1,
+                "cartProduct": {
+                    "productName": "Sample Product",
+                    "price": 29.99,
+                    "description": "A brief description of the product.",
+                    "manufacturer": "Manufacturer Name",
+                    "category": "ELECTRONICS",
+                    "status": "AVAILABLE"
+                },
+                "cartItemQuantity": 1
+            }
+        ],
+        "address": null
+    }
+]
+
+GET /customers : Getting All customers
+http://localhost:9000/customers
+postman : Headers
+key : token value : customer_12574fe1
+
+Response:
+[
+    {
+        "customerId": 2,
+        "firstName": "John",
+        "lastName": "Doe",
+        "mobileNo": "9876543210",
+        "emailId": "john.doe@example.com",
+        "password": "Password123!",
+        "createdOn": "2024-08-13T13:16:00.418814",
+        "creditCard": null,
+        "address": {
+            "home": {
+                "addressId": 2,
+                "streetNo": "rajaji pavan",
+                "buildingName": null,
+                "locality": "indian",
+                "city": "Springfield",
+                "state": "IL",
+                "pincode": "214278"
+            }
+        },
+        "orders": [],
+        "customerCart": null
+    }
+]
+
+
+PUT /customer : Updates logged in customer
+http://localhost:9000/customer?mobile=9012901290(old mobile no)
+key = token value = customer_577d3aa2
+Json :
+{
+  "firstName": "John",
+  "lastName": "Doe",
+  "emailId": "john.doe@example.com",
+  "mobileNo": "9876543210",(updating mobile no)
+  "password":"Password123!"
+}
+Response :
+{
+    "customerId": 2,
+    "firstName": "John",
+    "lastName": "Doe",
+    "mobileNo": "9012901293",
+    "emailId": "john.doe@example.com",
+    "password": "Password123!",
+    "createdOn": "2024-08-13T13:16:00.418814",
+    "creditCard": null,
+    "address": {
+        "home": {
+            "addressId": 2,
+            "streetNo": "rajaji pavan",
+            "buildingName": null,
+            "locality": "indian",
+            "city": "Springfield",
+            "state": "IL",
+            "pincode": "214278"
+        }
+    },
+    "orders": [],
+    "customerCart": null
+}
+
+
+
+PUT /customer/update/password : Updates customer password
+http://localhost:9000/customer/update/password
+Headers :
+key = token value = customer_a21be6fd
+Json : 
+{
+  "mobileId": "9876543210",
+  "emailId": "john.doe@example.com",
+  "password": "Password1239!"
+}
+Response :
+{
+    "customerId": 52,
+    "firstName": "John",
+    "lastName": "Doe",
+    "mobileNo": "9876543210",
+    "emailId": "john.doe@example.com",
+    "password": "Password1239!",
+    "createdOn": "2024-08-14T08:57:05.319256",
+    "creditCard": null,
+    "address": {
+        "home": {
+            "addressId": 52,
+            "streetNo": "rajaji pavan",
+            "buildingName": null,
+            "locality": "indian",
+            "city": "Springfield",
+            "state": "IL",
+            "pincode": "214278"
+        }
+    },
+    "orders": [],
+    "customerCart": null
+}
+
+PUT /customer/update/card : Updates credit card details
+http://localhost:9000/customer/update/card
+Headers :
+key = token value = customer_a21be6fd
+Json :
+{
+  "cardNumber": "1234567812345678",
+  "cardValidity": "08/2024",
+  "cardCVV": "123"
+}
+Response:
+{
+    "customerId": 52,
+    "firstName": "John",
+    "lastName": "Doe",
+    "mobileNo": "9012901294",
+    "emailId": "john.doe@example.com",
+    "password": "Password1239!",
+    "createdOn": "2024-08-14T08:57:05.319256",
+    "creditCard": {
+        "cardNumber": "1234567812345678",
+        "cardValidity": "08/2024",
+        "cardCVV": "123"
+    },
+    "address": {
+        "home": {
+            "addressId": 52,
+            "streetNo": "rajaji pavan",
+            "buildingName": null,
+            "locality": "indian",
+            "city": "Springfield",
+            "state": "IL",
+            "pincode": "214278"
+        }
+    },
+    "orders": [],
+    "customerCart": null
+}
+
+PUT /customer/update/address?type=home : Updates customer's home address
+http://localhost:9000/customer/update/address?type=home
+Headers :
+key = token value = customer_577d3aa2
+JSON :
+{
+            "addressId": 2,
+            "streetNo": "ratan nagar",
+            "buildingName": "building first",
+            "locality": "indian",
+            "city": "Mumbai",
+            "state": "MH",
+            "pincode": "112233"
+}
+Response:
+{
+    "customerId": 2,
+    "firstName": "John",
+    "lastName": "Doe",
+    "mobileNo": "9012901293",
+    "emailId": "john.doe@example.com",
+    "password": "Password123!",
+    "createdOn": "2024-08-13T13:16:00.418814",
+    "creditCard": null,
+    "address": {
+        "home": {
+            "addressId": 2,
+            "streetNo": "ratan nagar",
+            "buildingName": "building first",
+            "locality": "indian",
+            "city": "Mumbai",
+            "state": "MH",
+            "pincode": "112233"
+        }
+    },
+    "orders": [],
+    "customerCart": null
+}
+
+PUT /customer/update/credentials : Updates email address and mobile number
+http://localhost:9000/customer/update
+Headers :
+key = token value = customer_a21be6fd
+Json: 
+{
+  "firstName": "John",
+    "lastName": "Doe",
+    "mobileNo": "9012901294",---updating this
+    "emailId": "john.doe@example.com",
+    "password": "Password123!"
+}
+Response :
+{
+    "customerId": 52,
+    "firstName": "John",
+    "lastName": "Doe",
+    "mobileNo": "9012901294",
+    "emailId": "john.doe@example.com",
+    "password": "Password1239!",
+    "createdOn": "2024-08-14T08:57:05.319256",
+    "creditCard": null,
+    "address": {
+        "home": {
+            "addressId": 52,
+            "streetNo": "rajaji pavan",
+            "buildingName": null,
+            "locality": "indian",
+            "city": "Springfield",
+            "state": "IL",
+            "pincode": "214278"
+        }
+    },
+    "orders": [],
+    "customerCart": null
+}
+
+Another check for email
+Response : not able to find email for this mail throw exception
+we have to change the code in the form of CustomerUpdateDto to CustomerDto
+
+
+DELETE /customer : Deletes logged in user with valid session token
+delete : http://localhost:9000/customer
+Headers :
+key = token value = customer_577d3aa2
+Json :
+{
+"mobileId":"9012901293",
+"emailId": "john.doe@example.com",
+"password" :"Password123!"
+}
+Respose :
+{
+    "token": "customer_577d3aa2",
+    "message": "Logged out sucessfully."
+} // here user is deleted
+
+DELETE /customer/delete/address?type=home : Deletes customer's home address
+http://localhost:9000/customer/delete/address?type=home
+Headers :
+key = token value = customer_577d3aa2
+Response:
+{
+    "customerId": 2,
+    "firstName": "John",
+    "lastName": "Doe",
+    "mobileNo": "9012901293",
+    "emailId": "john.doe@example.com",
+    "password": "Password123!",
+    "createdOn": "2024-08-13T13:16:00.418814",
+    "creditCard": null,
+    "address": {}, --- here address is deleted
+    "orders": [],
+    "customerCart": null
+}
+
+Seller Module
+POST /register/seller : Register a new seller
+http://localhost:9000/register/seller
+{
+    "firstName":"ramesh seller",
+    "lastName":"shinde",
+    "password":"ramesh87894",
+    "mobile":"7709161239",
+    "emailId":"rameshseller@gmail.com"
+}
+
+POST /login/seller : Logging in Seller
+http://localhost:9000/login/seller
+{
+    "mobile": "7709161239",
+    "password": "ramesh87894"
+    
+}
+Response :
+{
+    "sessionId": 4,
+    "token": "seller_d0913a66",
+    "userId": 52,
+    "userType": "seller",
+    "sessionStartTime": "2024-08-13T15:25:08.6166855",
+    "sessionEndTime": "2024-08-13T16:25:08.6166855"
+}
+
+POST /logout/seller : Logging out Seller based on session token
+http://localhost:9000/logout/seller
+{
+"token" : "seller_d0913a66"
+}
+Response:
+{
+    "token": "seller_d0913a66",
+    "message": "Logged out sucessfully."
+}
+
+GET /seller/{sellerid} : Gets seller with passed seller Id
+http://localhost:9000/seller/52
+No Headers here
+Response :
+{
+    "sellerId": 52,
+    "firstName": "ramesh seller",
+    "lastName": "shinde",
+    "password": "ramesh87894",
+    "mobile": "7709161239",
+    "emailId": "rameshseller@gmail.com"
+}
+
+GET /seller/current : Gets seller details for currently logged in seller
+http://localhost:9000/seller/current
+Headers :
+key = token value = seller_d0913a66
+{
+    "sellerId": 52,
+    "firstName": "ramesh seller",
+    "lastName": "shinde",
+    "password": "ramesh87894",
+    "mobile": "7709161239",
+    "emailId": "rameshseller@gmail.com"
+}
+
+
+
+GET /sellers : Gets all sellers
+http://localhost:9000/sellers  
+
+POST /addseller : Adding new seller
+http://localhost:9000/addseller
+Request :
+{
+    "firstName":"rahul seller",
+    "lastName":"patil",
+    "password":"rahul87894",
+    "mobile":"7709165329",
+    "emailId":"rahulseller@gmail.com"
+}
+Response:
+{
+    "sellerId": 1,
+    "firstName": "rahul seller",
+    "lastName": "patil",
+    "password": "rahul87894",
+    "mobile": "7709165329",
+    "emailId": "rahulseller@gmail.com"
+}
+
+
+PUT /seller : Updates seller details
+here first seller login then update into another http method
+request : http://localhost:9000/login/seller
+{
+    "mobile": "7709161239",
+    "password": "ramesh87894"    
+}
+Response:
+{
+    "sessionId": 5,
+    "token": "seller_8e0857a0",
+    "userId": 52,
+    "userType": "seller",
+    "sessionStartTime": "2024-08-14T07:39:24.115662",
+    "sessionEndTime": "2024-08-14T08:39:24.115662"
+}
+Now Update that seller use token
+http://localhost:9000/seller
+Headers :
+key = token value = seller_8e0857a0
+Request :
+{
+        "sellerId": 52,
+        "firstName": "ramesh herker seller",
+        "lastName": "herker",
+        "password": "ramesh87894",
+        "mobile": "7709161239",
+        "emailId": "rameshhseller@gmail.com"
+}
+Response :
+{
+    "sellerId": 52,
+    "firstName": "ramesh herker seller",
+    "lastName": "herker",
+    "password": "ramesh87894",
+    "mobile": "7709161239",
+    "emailId": "rameshhseller@gmail.com"
+}
+
+
+PUT /seller/update/password : Updates seller password
+here only update the password
+Request : http://localhost:9000/seller/update/password
+key = token value = seller_8e0857a0
+{
+        "sellerId": 52,
+        "firstName": "ramesh herker seller",
+        "lastName": "herker",
+        "password": "updatedpassword",
+        "mobile": "7709821999",------here mobile update
+        "emailId": "rameshhseller@gmail.com"
+}
+Response :
+{
+    "token": "seller_8e0857a0",
+    "message": "Updated password and logged out. Login again with new password"
+}
+here we have to login again to perform operation...
+
+PUT /seller/update/mobile : Updates seller mobile number
+Request : http://localhost:9000/seller/update/mobile
+key = token value = seller_8e0857a0
+{
+        "sellerId": 52,
+        "firstName": "ramesh herker seller",
+        "lastName": "herker",
+        "password": "ramesh87894",
+        "mobile": "7709821999",------here mobile update
+        "emailId": "rameshhseller@gmail.com"
+}
+Response :
+{
+    "sellerId": 52,
+    "firstName": "ramesh herker seller",
+    "lastName": "herker",
+    "password": "ramesh87894",
+    "mobile": "7709821999",
+    "emailId": "rameshhseller@gmail.com"
+}
+
+DELETE /seller/{sellerid} : Deletes seller with passed id
+if delete seller first he have to login then delete seller
+Request : http://localhost:9000/login/seller
+Json :
+{
+        "password": "rahul87894",
+        "mobile": "7709165329"    
+}
+Response
+{
+    "sessionId": 6,
+    "token": "seller_8f1ef0b6",
+    "userId": 1,
+    "userType": "seller",
+    "sessionStartTime": "2024-08-14T07:56:28.7709734",
+    "sessionEndTime": "2024-08-14T08:56:28.7709734"
+}
+
+Delete the seller here
+Request : http://localhost:9000/seller/1
+Headers :
+key = token value = seller_8f1ef0b6
+Response :
+{
+    "sellerId": 1,
+    "firstName": "rahul seller",
+    "lastName": "patil",
+    "password": "rahul87894",
+    "mobile": "7709165329",
+    "emailId": "rahulseller@gmail.com"
+}
+if you want to login with same credential then
+Post : http://localhost:9000/login/seller
+Response :
+"message": "Seller record does not exist with given mobile number",
+"path": "/login/seller"
+
+
+Product Module
+GET /product/{id} : Gets product with given product id
+http://localhost:9000/product/1
+
+
+GET /products : Gets all products
+http://localhost:9000/products
+displayed all the products
+
+GET /products/{category} : Gets product with given category
+http://localhost:9000/products/ELECTRONICS
+Response :
+[
+    {
+        "prodName": "Sample Product",
+        "manufaturer": "Manufacturer Name",
+        "price": 29.99,
+        "quantity": 100
+    },
+    {
+        "prodName": "Samsung Galaxy s24",
+        "manufaturer": "Samsung Manufacturer",
+        "price": 3000.99,
+        "quantity": 210
+    },
+    {
+        "prodName": "Iphone Galaxy s24",
+        "manufaturer": "Apple Manufacturer",
+        "price": 3500.99,
+        "quantity": 100
+    }
+]
+
+
+GET /products/seller/{id} : Gets product of given seller id
+//seller must be login then only he will get products
+http://localhost:9000/products/seller/2
+Response: // here one seller have many products
+[
+    {
+        "prodName": "Iphone Galaxy s24",
+        "manufaturer": "Apple Manufacturer",
+        "price": 3500.99,
+        "quantity": 100
+    }
+]
+
+
+POST /products : Adds a new product to database
+http://localhost:9000/login/seller
+first seller login
+{
+        "password": "updatedpassword",
+        "mobile": "7709821999"
+    
+}
+Response :
+{
+    "sessionId": 9,
+    "token": "seller_30b85e11",
+    "userId": 52,
+    "userType": "seller",
+    "sessionStartTime": "2024-08-14T10:33:09.073533",
+    "sessionEndTime": "2024-08-14T11:33:09.073533"
+}
+
+http://localhost:9000/products
+Headers 
+key = token value = seller_30b85e11
+{
+    "productName": "Samsung Galaxy s24",
+    "price": 3000.99,
+    "description": "A brief description of the product.",
+    "manufacturer": "Samsung Manufacturer",
+    "quantity": 100,
+    "category": "ELECTRONICS",  
+    "status": "AVAILABLE"      
+}
+
+// this product is saved the selller id:52 
+Response:
+{
+    "productId": 2,
+    "productName": "Samsung Galaxy s24",
+    "price": 3000.99,
+    "description": "A brief description of the product.",
+    "manufacturer": "Samsung Manufacturer",
+    "quantity": 100,
+    "category": "ELECTRONICS",
+    "status": "AVAILABLE"
+} 
+
+PUT /products : Updates the product with given product id
+http://localhost:9000/products
+Headers 
+key = token value = seller_30b85e11
+Json :
+{
+     "productId": 2,
+    "productName": "Samsung Galaxy s24",
+    "price": 3000.99,
+    "description": "Best product of Samsung.", --- update description
+    "manufacturer": "Samsung Manufacturer",
+    "quantity": 100,
+    "category": "ELECTRONICS",  
+    "status": "AVAILABLE"      
+}
+
+PUT /products/{id} : Updates product quantity
+http://localhost:9000/products/2
+Headers 
+key = token value = seller_30b85e11
+Json :
+{
+    "quantity": 110  
+}
+Response :
+{
+    "productId": 2,
+    "productName": "Samsung Galaxy s24",
+    "price": 3000.99,
+    "description": "Best product of Samsung.",
+    "manufacturer": "Samsung Manufacturer",
+    "quantity": 210, -------quantity updated 100+110=210
+    "category": "ELECTRONICS",
+    "status": "AVAILABLE"
+}
+
+GET /products/status/{status} : get prodcuts with status
+http://localhost:9000/products/status/pending
+
+DELETE /product/{id} : Deletes product with given id
+http://localhost:9000/product/1
+
+-------------
+Cart Module
+POST /cart/add : Add item to Cart (customer)
+http://localhost:9000/cart/add
+Headers :
+key = token value = customer_48d97144
+Json :
+{
+ "productId": 1,
+ "productName": "Product Name",
+ "price": 100.0,
+ "quantity": 10
+}
+Response
+{
+    "cartId": 2,
+    "cartItems": [
+        {
+            "cartItemId": 1,
+            "cartProduct": {
+                "productName": "Sample Product",
+                "price": 29.99,
+                "description": "A brief description of the product.",
+                "manufacturer": "Manufacturer Name",
+                "category": "ELECTRONICS",
+                "status": "AVAILABLE"
+            },
+            "cartItemQuantity": 1
+        }
+    ],
+    "cartTotal": 29.99
+}
+
+
+GET /cart : Get all items in Customer Cart
+http://localhost:9000/cart
+Headers
+key = token value = customer_48d97144
+{
+    "cartId": 2,
+    "cartItems": [
+        {
+            "cartItemId": 1,
+            "cartProduct": {
+                "productName": "Sample Product",
+                "price": 29.99,
+                "description": "A brief description of the product.",
+                "manufacturer": "Manufacturer Name",
+                "category": "ELECTRONICS",
+                "status": "AVAILABLE"
+            },
+            "cartItemQuantity": 1
+        }
+    ],
+    "cartTotal": 29.99
+}
+
+
+
+DELETE /cart : Remove item from Cart
+
+
+DELETE /cart/clear : Clear entire cart
+
+
+Order Module
+GET /orders/{id} : Gets order details with given order id
+http://localhost:9000/orders/3
+
+
+GET /orders : Gets all orders
+http://localhost:9000/orders
+Headers :
+key = token value = customer_aef2d400
+Response:
+[
+    {
+        "orderId": 1,
+        "date": "2024-08-16",
+        "orderStatus": "SUCCESS",
+        "total": 29.99,
+        "cardNumber": "6934567812345678",
+        "ordercartItems": [
+            {
+                "cartItemId": 1,
+                "cartProduct": {
+                    "productName": "Sample Product",
+                    "price": 29.99,
+                    "description": "A brief description of the product.",
+                    "manufacturer": "Manufacturer Name",
+                    "category": "ELECTRONICS",
+                    "status": "AVAILABLE"
+                },
+                "cartItemQuantity": 1
+            }
+        ],
+        "address": null
+    },
+    {
+        "orderId": 2,
+        "date": "2024-08-16",
+        "orderStatus": "SUCCESS",
+        "total": 3500.99,
+        "cardNumber": "6934567812345678",
+        "ordercartItems": [
+            {
+                "cartItemId": 2,
+                "cartProduct": {
+                    "productName": "Iphone Galaxy s24",
+                    "price": 3500.99,
+                    "description": "A brief description of the product.",
+                    "manufacturer": "Apple Manufacturer",
+                    "category": "ELECTRONICS",
+                    "status": "AVAILABLE"
+                },
+                "cartItemQuantity": 1
+            }
+        ],
+        "address": null
+    },
+    {
+        "orderId": 3,
+        "date": "2024-08-16",
+        "orderStatus": "SUCCESS",
+        "total": 3000.99,
+        "cardNumber": "6934567812345678",
+        "ordercartItems": [
+            {
+                "cartItemId": 3,
+                "cartProduct": {
+                    "productName": "Samsung Galaxy s24",
+                    "price": 3000.99,
+                    "description": "Best product of Samsung.",
+                    "manufacturer": "Samsung Manufacturer",
+                    "category": "ELECTRONICS",
+                    "status": "AVAILABLE"
+                },
+                "cartItemQuantity": 1
+            }
+        ],
+        "address": {
+            "addressId": 153,
+            "streetNo": "rajaji pavan",
+            "buildingName": null,
+            "locality": "indian",
+            "city": "Springfield",
+            "state": "IL",
+            "pincode": "214278"
+        }
+    }
+]
+
+
+GET /orders/by/date : Gets orders placed on given date (DD-MM-YYYY)
+http://localhost:9000/orders/by/date?date=16-08-2024
+Headers :
+key = token , value = customer_aef2d400
+Response:
+[
+    {
+        "orderId": 1,
+        "date": "2024-08-16",
+        "orderStatus": "SUCCESS",
+        "total": 29.99,
+        "cardNumber": "6934567812345678",
+        "ordercartItems": [
+            {
+                "cartItemId": 1,
+                "cartProduct": {
+                    "productName": "Sample Product",
+                    "price": 29.99,
+                    "description": "A brief description of the product.",
+                    "manufacturer": "Manufacturer Name",
+                    "category": "ELECTRONICS",
+                    "status": "AVAILABLE"
+                },
+                "cartItemQuantity": 1
+            }
+        ],
+        "address": null
+    },
+    {
+        "orderId": 2,
+        "date": "2024-08-16",
+        "orderStatus": "SUCCESS",
+        "total": 3500.99,
+        "cardNumber": "6934567812345678",
+        "ordercartItems": [
+            {
+                "cartItemId": 2,
+                "cartProduct": {
+                    "productName": "Iphone Galaxy s24",
+                    "price": 3500.99,
+                    "description": "A brief description of the product.",
+                    "manufacturer": "Apple Manufacturer",
+                    "category": "ELECTRONICS",
+                    "status": "AVAILABLE"
+                },
+                "cartItemQuantity": 1
+            }
+        ],
+        "address": null
+    },
+    {
+        "orderId": 3,
+        "date": "2024-08-16",
+        "orderStatus": "SUCCESS",
+        "total": 3000.99,
+        "cardNumber": "6934567812345678",
+        "ordercartItems": [
+            {
+                "cartItemId": 3,
+                "cartProduct": {
+                    "productName": "Samsung Galaxy s24",
+                    "price": 3000.99,
+                    "description": "Best product of Samsung.",
+                    "manufacturer": "Samsung Manufacturer",
+                    "category": "ELECTRONICS",
+                    "status": "AVAILABLE"
+                },
+                "cartItemQuantity": 1
+            }
+        ],
+        "address": {
+            "addressId": 153,
+            "streetNo": "rajaji pavan",
+            "buildingName": null,
+            "locality": "indian",
+            "city": "Springfield",
+            "state": "IL",
+            "pincode": "214278"
+        }
+    }
+]
+
+
+Places a new order based on cart items
+POST /order/place : 
+http://localhost:9000/order/place
+Headers:
+key = token value = customer_48d97144
+Json:
+{ ---------------wrong json
+"creditCard": {
+        "cardNumber": "6934567812345678",
+        "expiryDate": "08/2024",
+        "cvv": "923"
+    },
+    "addressType": "SHIPPING"
+}
+Correct json -------------
+Headers :
+key : token value = customer_aef2d400
+JSON :
+{
+"cardNumber": {
+    "cardNumber": "6934567812345678",
+    "cardValidity": "08/2024",
+    "cardCVV": "923"
+    },
+"addressType": "home"
+}
+
+Response :
+
+
+PUT /orders/{id} : Updates a pending order
+http://localhost:9000/orders/1
+
+
+DELETE /orders/{id} : Cancels an order
+http://localhost:9000/orders/1
+Headers :
+key : token value = customer_aef2d400
+Response :
+{
+    "orderId": 1,
+    "date": "2024-08-16",
+    "orderStatus": "CANCELLED",
+    "total": 29.99,
+    "cardNumber": "6934567812345678",
+    "ordercartItems": [
+        {
+            "cartItemId": 1,
+            "cartProduct": {
+                "productName": "Sample Product",
+                "price": 29.99,
+                "description": "A brief description of the product.",
+                "manufacturer": "Manufacturer Name",
+                "category": "ELECTRONICS",
+                "status": "AVAILABLE"
+            },
+            "cartItemQuantity": 1
+        }
+    ],
+    "address": null
+}
+
+-------------- End -----------------
+
