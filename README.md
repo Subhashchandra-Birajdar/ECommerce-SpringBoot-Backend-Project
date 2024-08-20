@@ -48,9 +48,9 @@ This repository contains a REST API developed for an e-commerce application. The
 
 ## API Root Endpoint
 
-`https://localhost:8009/`
+`https://localhost:9000/`
 
-`http://localhost:8009/swagger-ui/index.html#/`
+`http://localhost:9000/swagger-ui/index.html#/`
 
 
 ## API Module Endpoints
@@ -123,7 +123,7 @@ This repository contains a REST API developed for an e-commerce application. The
 
 ### Sample API Response for Customer Login
 
-`POST   localhost:8009/login/customer`
+`POST   localhost:9000/login/customer`
 
 * Request Body
 
