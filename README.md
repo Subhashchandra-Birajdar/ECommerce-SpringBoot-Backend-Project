@@ -2,6 +2,10 @@
 
 This repository contains a REST API developed for an e-commerce application. The API supports fundamental CRUD operations required by any e-commerce platform, with user authentication and validation at every step.
 
+## E-R Diagram for the application
+
+![E-Commerce API ER Diagram](https://github.com/user-attachments/assets/c32f6197-fd6f-4f1d-ab8c-c8a590beed1a)
+
 ## Tech Stack
 - **Java**
 - **Spring Framework**
